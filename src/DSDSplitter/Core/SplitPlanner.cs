@@ -9,7 +9,7 @@ public static class SplitPlanner
 
     /// <summary>按扩展名判断是否为 DSD 音频（需要转 PCM）。</summary>
     public static bool IsDsd(string path) =>
-        DsdExtensions.Contains(Path.GetExtension(path), StringComparison.OrdinalIgnoreCase);
+        DsdExtensions.Contains(Path.GetExtension(path), StringComparer.OrdinalIgnoreCase);
 
     /// <summary>
     /// 填充每轨结束时间：中间轨 = 下一轨 INDEX 01；末轨 = 音频总时长。
