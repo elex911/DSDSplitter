@@ -1,0 +1,44 @@
+name: Build Windows Release
+
+on:
+  push:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+jobs:
+  build-win-x64:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup .NET 8
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Publish single-file DSDSplitter.exe
+        run: |
+          dotnet publish src/DSDSplitter/DSDSplitter.csproj -c Release -r win-x64 -o dist/DSDSplitter
+
+      - name: Download static ffmpeg/ffprobe for Windows
+        shell: pwsh
+        run: |
+          $url = "https://www.gyan.dev/ffmpeg/builds/ffmpeg-release-essentials.zip"
+          Invoke-WebRequest -Uri $url -OutFile ffmpeg.zip
+          Expand-Archive -Path ffmpeg.zip -DestinationPath ffmpeg_tmp -Force
+          $binDir = (Get-ChildItem -Path ffmpeg_tmp -Recurse -Filter "ffmpeg.exe" | Select-Object -First 1).DirectoryName
+          Copy-Item "$binDir\ffmpeg.exe" "dist\DSDSplitter\ffmpeg.exe"
+          Copy-Item "$binDir\ffprobe.exe" "dist\DSDSplitter\ffprobe.exe"
+
+      - name: Package green release ZIP
+        shell: pwsh
+        run: |
+          Compress-Archive -Path "dist\DSDSplitter\*" -DestinationPath "DSDSplitter-win-x64.zip" -Force
+
+      - name: Upload DSDSplitter-win-x64.zip
+        uses: actions/upload-artifact@v4
+        with:
+          name: DSDSplitter-win-x64
+          path: DSDSplitter-win-x64.zip

@@ -1,0 +1,35 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <UseWindowsForms>true</UseWindowsForms>
+    <AssemblyName>DSDSplitter</AssemblyName>
+    <RootNamespace>DSDSplitter</RootNamespace>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <Version>1.0.0</Version>
+    <Company>DSD Splitter</Company>
+    <Product>DSD Splitter</Product>
+    <Description>单文件绿色 CUE 分轨工具：拖进去就切。</Description>
+  </PropertyGroup>
+
+  <!--
+    A 档瘦身策略（见开发文档 8.2-A）：
+    仅 Release 生效，不影响 Debug 调试体验。
+    配合精简 ffmpeg，最终约 68MB，免安装、双击即跑。
+  -->
+  <PropertyGroup Condition="'$(Configuration)' == 'Release'">
+    <PublishSingleFile>true</PublishSingleFile>
+    <SelfContained>true</SelfContained>
+    <EnableCompressionInSingleFile>true</EnableCompressionInSingleFile>
+    <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
+    <DebugType>none</DebugType>
+    <DebugSymbols>false</DebugSymbols>
+  </PropertyGroup>
+
+  <!-- GB18030 / Big5 等代码页编码支持（CUE 静默纠错第 1 项） -->
+  <ItemGroup>
+    <PackageReference Include="System.Text.Encoding.CodePages" Version="8.0.0" />
+  </ItemGroup>
+
+</Project>
